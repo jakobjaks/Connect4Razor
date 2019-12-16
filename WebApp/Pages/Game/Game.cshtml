@@ -1,0 +1,67 @@
+@page
+@using Domain
+@model WebApp.Pages.Game.Game
+
+@{
+    ViewData["Title"] = "Game";
+}
+
+<h1>Play</h1>
+
+<table id="board"class="board">
+    @for (var y = 0; y < Model.GameState.Height; y++)
+    {
+        <tr>
+            <td>@y</td>
+            @for (var x = 0; x < Model.GameState.Width; x++)
+            {
+                <td>
+                <form method="post">
+                    <input type="submit" value="@y@x" id="@y@x"class="cell @Html.Raw(GetGameButtonLabel(Model.GameState.Board[y, x]))" onclick="@{ Select(x); }" formmethod="post"/>
+                </form>
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+@functions
+{
+    string GetGameButtonLabel(int cellState)
+    {
+        switch (cellState)
+        {
+            case 0:
+                return "";
+            case 1:
+                return "red";
+            case 2:
+                return "black";
+        }
+        return "Z";
+    }
+
+    void Select(int x)
+    {
+        var move = new Move();
+        move.YCoordinate = (GetLowestFreeCell(x));
+        move.XCoordinate = x;
+        Model.GameState.Moves.Add(move);
+        
+        return;
+    }
+
+    int GetLowestFreeCell(int x)
+    {
+        for (int y = Model.GameState.Height - 1; y >= 0; y--)
+        {
+            if (Model.GameState.Board[y, x] == 0)
+            {
+                return y;
+            }
+        }
+        return 0;
+    }
+
+
+}

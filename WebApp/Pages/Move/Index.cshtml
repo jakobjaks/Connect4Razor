@@ -1,0 +1,54 @@
+@page
+@model WebApp.Pages_Move.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Move[0].PlayerOneTurn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Move[0].GameState)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Move[0].YCoordinate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Move[0].XCoordinate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Move) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlayerOneTurn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GameState.GameMode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.YCoordinate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.XCoordinate)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.MoveId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.MoveId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.MoveId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
