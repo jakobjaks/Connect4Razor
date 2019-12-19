@@ -18,10 +18,15 @@ namespace WebApp.Pages_GameSettings
         public EditModel(DAL.AppDbContext context)
         {
             _context = context;
+
         }
 
         [BindProperty]
         public GameSettings GameSettings { get; set; }
+
+        [BindProperty]
+        public GameMode GameMode { get; set; }
+        
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -47,9 +52,8 @@ namespace WebApp.Pages_GameSettings
             {
                 return Page();
             }
-
+            GameSettings.GameMode = GameMode;
             _context.Attach(GameSettings).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -66,7 +70,7 @@ namespace WebApp.Pages_GameSettings
                 }
             }
 
-            return RedirectToPage("/Game/StartGame");
+            return RedirectToPage("/Game/Game");
         }
 
         private bool GameSettingsExists(int id)

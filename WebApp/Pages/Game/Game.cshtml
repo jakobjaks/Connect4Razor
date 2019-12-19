@@ -5,31 +5,30 @@
 @{
     ViewData["Title"] = "Game";
 }
-
-<h1>Play</h1>
-
-<table id="board"class="board">
-    @for (var y = 0; y < Model.GameState.Height; y++)
-    {
-        <tr>
-            <td>@y</td>
-            @for (var x = 0; x < Model.GameState.Width; x++)
-            {
-                <td>
-                    <a type="submit" asp-route-col="@x" asp-route-gameId="@Model.GameState.StateId" id="@y@x" class="cell @Html.Raw(GetGameButtonLabel(Model.GameState.Board[y, x]))"/>
-                </td>
-            }
-        </tr>
-    }
-</table>
-<form method="post">
-    <div class="form-group">
-        <label asp-for="GameState.GameName" class="control-label"></label>
-        <input asp-for="GameState.GameName" class="form-control"/>
-        <span asp-validation-for="GameState.GameName" class="text-danger"></span>
-    </div>
-    <input type="submit" value="Save" class="btn btn-primary" />
-</form>
+<div>
+    <h1>Play</h1>
+    <table id="board"class="board">
+        @for (var y = 0; y < Model.GameState.Height; y++)
+        {
+            <tr>
+                @for (var x = 0; x < Model.GameState.Width; x++)
+                {
+                    <td>
+                        <a type="submit" asp-route-col="@x" asp-route-gameId="@Model.GameState.StateId" id="@y@x" class="cell @Html.Raw(GetGameButtonLabel(Model.GameState.Board[y, x]))"/>
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+    <form method="post">
+        <div class="form-group save">
+            <label asp-for="GameState.GameName" class="control-label save-label">Give a name for your save game</label>
+            <input asp-for="GameState.GameName" class="form-control"/>
+            <span asp-validation-for="GameState.GameName" class="text-danger"></span>
+            <input type="submit" value="Save" class="btn btn-primary save-button"/>
+        </div>
+    </form>
+</div>
 
 @functions
 {

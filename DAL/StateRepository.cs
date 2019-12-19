@@ -79,5 +79,12 @@ namespace DAL
         {
             return await _context.SaveChangesAsync();
         }
+
+        public Task<int> DeleteGameState(int gameId)
+        {
+            var gameState = GetGameState(gameId);
+            _gameStates.Remove(gameState);
+            return SaveChangesAsync();
+        }
     }
 }

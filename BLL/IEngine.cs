@@ -15,5 +15,9 @@ namespace BLL
         Task<GameSettings> GetGameSettings();
         Task<BLL.DTO.GameState> UpdateGameState(int gameId, int col);
         Task<int> SaveGameStateWithName(DTO.GameState gameStateOuter);
+        Task UpdateSettingsBoardSize(GameSettings gameSettings);
+        Task<int> DeleteGameState(int gameId);
+        Task UpdatePlayerName(bool playerOne, string name);
+        Task<string> GetWinnerName(DTO.GameState.Win Winner);
     }
 }

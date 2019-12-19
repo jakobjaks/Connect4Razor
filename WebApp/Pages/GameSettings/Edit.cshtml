@@ -1,56 +1,53 @@
 @page
+@using Domain
 @model WebApp.Pages_GameSettings.EditModel
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>GameSettings</h4>
-<hr />
+<h4>Edit Game Settings</h4>
+<hr/>
 <div class="row">
     <div class="col-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="GameSettings.GameSettingsId" />
+            <input type="hidden" asp-for="GameSettings.GameSettingsId"/>
             <div class="form-group">
                 <label asp-for="GameSettings.BoardHeight" class="control-label"></label>
-                <input asp-for="GameSettings.BoardHeight" class="form-control" />
+                <input asp-for="GameSettings.BoardHeight" class="form-control"/>
                 <span asp-validation-for="GameSettings.BoardHeight" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="GameSettings.BoardWidth" class="control-label"></label>
-                <input asp-for="GameSettings.BoardWidth" class="form-control" />
+                <input asp-for="GameSettings.BoardWidth" class="form-control"/>
                 <span asp-validation-for="GameSettings.BoardWidth" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="GameSettings.PlayerOneName" class="control-label"></label>
-                <input asp-for="GameSettings.PlayerOneName" class="form-control" />
+                <input asp-for="GameSettings.PlayerOneName" class="form-control"/>
                 <span asp-validation-for="GameSettings.PlayerOneName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="GameSettings.PlayerTwoName" class="control-label"></label>
-                <input asp-for="GameSettings.PlayerTwoName" class="form-control" />
+                <input asp-for="GameSettings.PlayerTwoName" class="form-control"/>
                 <span asp-validation-for="GameSettings.PlayerTwoName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label  class="control-label">Game Mode</label>
-                <select name="Game Mode" class="form-control">
-                    <option value="1">AI Starts</option>
-                    <option value="2">Human Starts</option>
-                    <option value="3">Human vs Human</option>
-                </select>
+                <label class="control-label">Game Mode</label>
+                <div>
+
+                    @Html.DropDownListFor(model => model.GameMode, new SelectList(new GameMode[] {GameMode.AI_FIRST, GameMode.HUMAN_FIRST, GameMode.HUMAN_VS_HUMAN}, Model.GameMode), new {@class = "form-control"})
+                </div>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary"/>
             </div>
         </form>
     </div>
 </div>
 
 
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

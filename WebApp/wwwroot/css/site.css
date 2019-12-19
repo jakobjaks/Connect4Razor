@@ -101,3 +101,29 @@ body {
   background: #000;
   background: linear-gradient(to bottom, #333 0%,#000000 100%);
 }
+
+.board {
+  margin: auto;
+}
+
+h1, .save-label {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.save {
+  margin: auto;
+  width: 300px;
+}
+
+.save-button {
+  margin-top: 10px;
+  margin-left: 120px;
+}
+
+.end-game {
+  display: block;
+  text-align: center;
+  line-height: 150%;
+  font-size: 7em;
+}

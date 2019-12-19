@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using BLL;
 using ConsoleUI;
 using Domain;
 using MenuSystem;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualBasic.CompilerServices;
 using GameState = BLL.DTO.GameState;
 
 namespace ConsoleApp
@@ -27,7 +24,7 @@ namespace ConsoleApp
             Console.Clear();
 
             Console.WriteLine("Hello Game!");
-            
+
             var settingsMenu = new Menu(2)
             {
                 Title = "Settings",
@@ -114,7 +111,6 @@ namespace ConsoleApp
         }
 
 
-
         private (int result, bool wasCanceled) GetUserIntInput(string prompt, int min, int max,
             int? cancelIntValue = null, string cancelStrValue = "")
         {
@@ -154,9 +150,8 @@ namespace ConsoleApp
                 Console.WriteLine($"'{consoleLine}' cant be converted to int value!");
             } while (true);
         }
-        
-        
-        
+
+
         private string ChangeName()
         {
             bool user;
@@ -171,11 +166,18 @@ namespace ConsoleApp
                 {
                     return "wrong place";
                 }
-
                 if (int.TryParse(consoleLine, out var userInt))
                 {
-                    if (userInt == 1) user = true;
-                    else if (userInt == 2) user = false;
+                    if (userInt == 1)
+                    {
+                        user = true;
+                        break;
+                    }
+                    else if (userInt == 2)
+                    {
+                        user = false;
+                        break;
+                    }
                     else
                     {
                         Console.WriteLine("Bad input");
@@ -187,25 +189,29 @@ namespace ConsoleApp
             {
                 Console.WriteLine("Enter the new name:");
                 consoleLine = Console.ReadLine();
+                if (consoleLine != "")
+                {
+                    Engine.UpdatePlayerName(user, consoleLine);
+                    break;
+                }
             } while (true);
+
+            return "M";
         }
 
         private string SetBoardSize()
         {
             var (item1, item2) = GetBoardSize();
-
             var gameSettings = new GameSettings()
             {
                 BoardHeight = item1,
                 BoardWidth = item2,
             };
-
-            
-
+            Engine.UpdateSettingsBoardSize(gameSettings);
             return "DONE";
         }
-        
-        
+
+
         private (int, int) GetBoardSize()
         {
             (int, int) tuple = (0, 0);
@@ -228,7 +234,7 @@ namespace ConsoleApp
 
             return tuple;
         }
-        
+
         private string AiFirstGame()
         {
             GameState = Engine.CreateGameStateWithGameMode(GameMode.AI_FIRST).Result;
@@ -238,14 +244,14 @@ namespace ConsoleApp
 
         private string AiSecondGame()
         {
-            GameState = Engine.CreateGameStateWithGameMode(GameMode.AI_FIRST).Result;
+            GameState = Engine.CreateGameStateWithGameMode(GameMode.HUMAN_FIRST).Result;
             StartGame();
             return "Started";
         }
 
         private string PVPGame()
         {
-            GameState = Engine.CreateGameStateWithGameMode(GameMode.AI_FIRST).Result;
+            GameState = Engine.CreateGameStateWithGameMode(GameMode.HUMAN_VS_HUMAN).Result;
             StartGame();
             return "Started";
         }
@@ -253,9 +259,9 @@ namespace ConsoleApp
         private string LoadGame()
         {
             Console.Clear();
-            
+
             var list = GameUI.DisplaySavedGames(Engine.GetAllSavedGameStates().Result);
-            
+
             Console.WriteLine("Enter the id of the saved game or press M to go back");
             Console.Write(">");
             var consoleLine = Console.ReadLine();
@@ -263,13 +269,15 @@ namespace ConsoleApp
             {
                 return "M";
             }
+
             foreach (var save in list)
             {
                 if (save.GameStateId.ToString().Equals(consoleLine))
                 {
                     GameState = Engine.GetSavedState(save.GameStateId);
                     StartGame();
-                } else if (consoleLine.Equals("M"))
+                }
+                else if (consoleLine.Equals("M"))
                 {
                     return "M";
                 }
@@ -286,6 +294,7 @@ namespace ConsoleApp
             {
                 return;
             }
+
             GameState.GameName = consoleLine;
             Engine.SaveGameStateWithName(GameState);
         }
@@ -302,7 +311,7 @@ namespace ConsoleApp
                 int userXint;
                 bool userCanceled;
 
-                (userXint, userCanceled) = GetUserIntInput( "Enter X coordinate", 1, 7, 0);
+                (userXint, userCanceled) = GetUserIntInput("Enter X coordinate", 1, 7, 0);
                 if (userCanceled)
                 {
                     done = true;
@@ -312,7 +321,9 @@ namespace ConsoleApp
                     try
                     {
                         GameState = Engine.UpdateGameState(GameState.StateId, userXint - 1).Result;
-                    } catch (GameException e) {
+                    }
+                    catch (GameException e)
+                    {
                         Console.WriteLine("This column is full!");
                     }
                 }
@@ -322,15 +333,21 @@ namespace ConsoleApp
                     done = true;
                 }
             } while (!done);
-
             Console.Clear();
-
+            var winner = Engine.GetWinnerName(GameState.Winner).Result;
+            if (GameState.Winner == GameState.Win.DRAW)
+            {
+                Console.WriteLine("There has been a draw!");
+            }
+            else
+            {
+                Console.WriteLine(winner + " has won!");
+            }
+            Console.WriteLine("Press enter to continue");
             var consoleLine = Console.ReadLine();
             if (consoleLine != "") ;
             Console.Clear();
             return "GAME OVER!!";
         }
-
-        
     }
 }

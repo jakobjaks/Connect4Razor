@@ -39,7 +39,7 @@ namespace BLL
             {
                 SelectCell(col, gameStateOuter);
                 TurnSwitch(gameStateOuter, gameStateInner);
-                if (gameStateInner.GameMode != GameMode.HUMAN_VS_HUMAN)
+                if (gameStateInner.GameMode != GameMode.HUMAN_VS_HUMAN && gameStateOuter.Winner != DTO.GameState.Win.DRAW)
                 {
                     GenerateAIMove(gameStateOuter);
                     TurnSwitch(gameStateOuter, gameStateInner);
@@ -48,6 +48,7 @@ namespace BLL
                 gameStateInner.BoardJson = SerializeBoard(gameStateOuter.Board);
                 await _stateRepository.UpdateGameState(gameStateInner);
             }
+
             return gameStateOuter;
         }
 
@@ -120,6 +121,7 @@ namespace BLL
                 GenerateAIMove(gameState);
                 gameState.PlayerOneTurn = true;
             }
+
             gameState.StateId = await SaveGameState(gameState);
             return gameState;
         }
@@ -158,12 +160,11 @@ namespace BLL
         {
             var y = (GetLowestFreeCell(x, gameState));
             gameState.Board[y, x] = gameState.PlayerOneTurn ? 1 : 2;
-            CheckForWin();
+            CheckForWin(gameState);
         }
 
         private int GetLowestFreeCell(int x, BLL.DTO.GameState gameState)
         {
-            if (gameState.Board[0,x] != 0);
             for (int y = gameState.Height - 1; y >= 0; y--)
             {
                 if (gameState.Board[y, x] == 0)
@@ -177,6 +178,7 @@ namespace BLL
 
         private bool CheckIfColumnNotFull(int x, DTO.GameState gameState)
         {
+            if (gameState.Width - 1 < x || x < 0) return false;
             return gameState.Board[0, x] == 0;
         }
 
@@ -184,14 +186,24 @@ namespace BLL
         {
             gameStateOuter.PlayerOneTurn = !gameStateOuter.PlayerOneTurn;
             gameStateInner.Turn = !gameStateInner.Turn;
+            if (CheckIfBoardIsFull(gameStateOuter)) gameStateOuter.Winner = DTO.GameState.Win.DRAW;
+
+        }
+
+        private bool CheckIfBoardIsFull(DTO.GameState gameState)
+        {
+            for (var x = 0; x < gameState.Width; x++) {
+                if (gameState.Board[0, x] == 0) return false; 
+            }
+            return true;
         }
 
         private void GenerateAIMove(BLL.DTO.GameState gameState)
         {
             Random r = new Random();
-            int rInt = r.Next(0, gameState.Width);
             while (true)
             {
+                var rInt = r.Next(0, gameState.Width);
                 if (gameState.Board[0, rInt] != 0) continue;
                 SelectCell(rInt, gameState);
                 break;
@@ -207,9 +219,68 @@ namespace BLL
             return _stateRepository.SaveGameState(namedSaveState);
         }
 
-        private void CheckForWin()
+        //https://stackoverflow.com/questions/39062111/java-how-to-check-diagonal-connect-four-win-in-2d-array
+        private void CheckForWin(DTO.GameState gameState)
         {
-            
+            int[,] directions = new int[,] {{1,0}, {1,-1}, {1,1}, {0,1}};
+            for (var d = 0; d < 4; d++) {
+                int dx = directions[d, 0];
+                int dy = directions[d, 1];
+                for (int x = 0; x < gameState.Width; x++) {
+                    for (int y = 0; y < gameState.Height; y++) {
+                        int lastx = x + 3*dx;
+                        int lasty = y + 3*dy;
+                        if (0 <= lastx && lastx < gameState.Width && 0 <= lasty && lasty < gameState.Height) {
+                            int w = gameState.Board[x,y];
+                            if (w != 0 && w == gameState.Board[x+dx, y+dy] 
+                                         && w == gameState.Board[x+2*dx, y+2*dy] 
+                                         && w == gameState.Board[lastx, lasty]) {
+                                if (w == 1)
+                                {
+                                    gameState.Winner = DTO.GameState.Win.PLAYER_ONE;
+                                }
+                                else
+                                {
+                                    gameState.Winner = DTO.GameState.Win.PLAYER_TWO;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public Task<int> DeleteGameState(int gameId)
+        {
+            return _stateRepository.DeleteGameState(gameId);
+        }
+
+        public async Task<string> GetWinnerName(DTO.GameState.Win Winner)
+        {
+            var settings = await _stateRepository.GetGameSettings();
+            return Winner == DTO.GameState.Win.PLAYER_ONE ? settings.PlayerOneName : settings.PlayerTwoName;
+        }
+
+        public async Task UpdatePlayerName(bool playerOne, string name)
+        {
+            var settings = await _stateRepository.GetGameSettings();
+            if (playerOne)
+            {
+                settings.PlayerOneName = name;
+            }
+            else
+            {
+                settings.PlayerTwoName = name;
+            }
+            await _stateRepository.SaveChangesAsync();
+        }
+
+        public async Task UpdateSettingsBoardSize(GameSettings gameSettings)
+        {
+            var settings = await _stateRepository.GetGameSettings();
+            settings.BoardHeight = gameSettings.BoardHeight;
+            settings.BoardWidth = gameSettings.BoardWidth;
+            await _stateRepository.SaveChangesAsync();
         }
     }
 }

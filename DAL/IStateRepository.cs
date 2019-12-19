@@ -13,6 +13,7 @@ namespace DAL
         Task<int> SaveGameSettings(GameSettings gameSettings);
         Task<int> SaveChangesAsync();
         Task<int> UpdateGameState(GameState gameState);
+        Task<int> DeleteGameState(int gameId);
 
     }
 }

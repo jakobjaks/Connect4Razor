@@ -12,6 +12,8 @@ namespace ConsoleApp
 {
     class Program
     {
+        // Inspired by
+        // https://medium.com/swlh/how-to-take-advantage-of-dependency-injection-in-net-core-2-2-console-applications-274e50a6c350
         public static void Main(string[] args)
         {
             var serviceProvider = new ServiceCollection()

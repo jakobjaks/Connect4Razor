@@ -119,20 +119,14 @@
           <e p="Game" t="Include">
             <e p="Game.cshtml" t="Include" />
             <e p="Game.cshtml.cs" t="Include" />
+            <e p="Win.cshtml" t="Include" />
+            <e p="Win.cshtml.cs" t="Include" />
           </e>
           <e p="GameSettings" t="Include">
             <e p="Edit.cshtml" t="Include" />
             <e p="Edit.cshtml.cs" t="Include" />
           </e>
           <e p="GameState" t="Include">
-            <e p="Create.cshtml" t="Include" />
-            <e p="Create.cshtml.cs" t="Include" />
-            <e p="Delete.cshtml" t="Include" />
-            <e p="Delete.cshtml.cs" t="Include" />
-            <e p="Details.cshtml" t="Include" />
-            <e p="Details.cshtml.cs" t="Include" />
-            <e p="Edit.cshtml" t="Include" />
-            <e p="Edit.cshtml.cs" t="Include" />
             <e p="Index.cshtml" t="Include" />
             <e p="Index.cshtml.cs" t="Include" />
           </e>

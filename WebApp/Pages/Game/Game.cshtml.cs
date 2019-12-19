@@ -17,9 +17,10 @@ namespace WebApp.Pages.Game
         }
 
         [BindProperty] public BLL.DTO.GameState GameState { get; set; }
+        [BindProperty] public string WinnerName { get; set; }
 
 
-        public async Task OnGet(int? gameId, int? col)
+        public async Task<IActionResult> OnGet(int? gameId, int? col)
         {
             if (gameId == null && col == null)
             {
@@ -36,16 +37,20 @@ namespace WebApp.Pages.Game
 
                 if (GameState.Winner != BLL.DTO.GameState.Win.NO_WINNER)
                 {
-                    RedirectToPage("/Game/StartGame");
+                    WinnerName = await _engine.GetWinnerName(GameState.Winner);
+                    await _engine.DeleteGameState(gameId.Value);
+                    return RedirectToPage("/Game/Win", GameState.Winner == BLL.DTO.GameState.Win.DRAW ? 
+                        new { winner = "There has been a draw!"} : new { winner = WinnerName + " has won!"});
                 }
             }
+            return Page();
         }
 
         public async Task<RedirectToPageResult> OnPost(int gameId, int col)
         {
             GameState.StateId = gameId;
             await _engine.SaveGameStateWithName(GameState);
-            return RedirectToPage("./StartGame");
+            return RedirectToPage("./Game");
         }
     }
 }
