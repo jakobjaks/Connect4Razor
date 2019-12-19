@@ -35,15 +35,21 @@
                 <span asp-validation-for="GameSettings.PlayerTwoName" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label  class="control-label">Game Mode</label>
+                <select name="Game Mode" class="form-control">
+                    <option value="1">AI Starts</option>
+                    <option value="2">Human Starts</option>
+                    <option value="3">Human vs Human</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

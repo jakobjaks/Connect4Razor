@@ -5,43 +5,35 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Saved Games</h1>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.GameState[0].GameStateName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GameState[0].Turn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GameState[0].GameStateId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GameState[0].BoardHeight)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GameState[0].BoardWidth)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GameState[0].GameMode)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.GameState[0].GameStateName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GameState[0].GameStateId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GameState[0].BoardHeight)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GameState[0].BoardWidth)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GameState[0].GameMode)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.GameState) {
+    @foreach (var item in Model.GameState)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.GameStateName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Turn)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.GameStateId)
@@ -56,11 +48,9 @@
                 @Html.DisplayFor(modelItem => item.GameMode)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.GameStateId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.GameStateId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.GameStateId">Delete</a>
+                <a asp-page="/Game/Game" asp-route-gameId="@item.GameStateId">Play</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

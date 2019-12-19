@@ -9,37 +9,43 @@ namespace WebApp.Pages.Game
 {
     public class Game : PageModel
     {
-        public int[,] Board { get; set; }
-        public readonly Engine Engine;
-        private readonly IAppUnitOfWork _appUnitOfWork;
+        private readonly IEngine _engine;
 
-        public Game(IAppUnitOfWork appUnitOfWork)
+        public Game(IEngine engine)
         {
-            _appUnitOfWork = appUnitOfWork;
-            Engine = new Engine(_appUnitOfWork.States);
+            _engine = engine;
         }
 
-        public BLL.DTO.GameState GameState = new BLL.DTO.GameState();
+        [BindProperty] public BLL.DTO.GameState GameState { get; set; }
 
 
-        public async void OnGet()
+        public async Task OnGet(int? gameId, int? col)
         {
-            GameState = await Engine.CreateNewGameState();
-
-        }
-    
-
-
-        public async Task<IActionResult> OnPost()
-        {
-            if (!ModelState.IsValid)
+            if (gameId == null && col == null)
             {
-                return Page();
+                GameState = await _engine.CreateGameStateFromSettings();
             }
-            await Engine.SaveGameState(GameState);
-            return Page();
+            else if (gameId != null && col == null)
+            {
+                GameState = _engine.GetSavedState(gameId.Value);
+            }
+            else if (gameId != null)
+            {
 
+                GameState = await _engine.UpdateGameState(gameId.Value, col.Value);
 
+                if (GameState.Winner != BLL.DTO.GameState.Win.NO_WINNER)
+                {
+                    RedirectToPage("/Game/StartGame");
+                }
+            }
+        }
+
+        public async Task<RedirectToPageResult> OnPost(int gameId, int col)
+        {
+            GameState.StateId = gameId;
+            await _engine.SaveGameStateWithName(GameState);
+            return RedirectToPage("./StartGame");
         }
     }
 }

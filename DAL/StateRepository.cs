@@ -9,52 +9,49 @@ namespace DAL
 {
     public class StateRepository : IStateRepository
     {
-        private readonly DAL.AppDbContext _context;
+        private readonly AppDbContext _context;
+        private readonly DbSet<GameState> _gameStates;
+        private readonly DbSet<GameSettings> _gameSettings;
 
         public StateRepository(AppDbContext context)
         {
             _context = context;
+            _gameStates = _context.Set<GameState>();
+            _gameSettings = _context.Set<GameSettings>();
         }
 
 
-        public GameState GetGameStateWithMoves(int id)
+        public GameState GetGameState(int id)
         {
-            var gameState = _context.GameStates.Include(item => item.Moves)
+            var gameState = _context.GameStates
                 .SingleOrDefaultAsync(item => item.GameStateId == id).Result;
-
             return gameState;
         }
 
         public async Task<List<GameState>> GetAllSavedGameStates()
         {
-            var gameStates = await _context.GameStates.ToListAsync();
-
+            var gameStates = await _context.GameStates.Where(item => item.GameStateName != null).ToListAsync();
             return gameStates;
         }
-
-        public async Task<int> SaveGameStateWithMoves(GameState gameState)
-        {
-            await SaveGameState(gameState);
-            return await SaveMoves(gameState.Moves);
-        }
-
+        
         public async Task<int> SaveGameState(GameState gameState)
         {
             await _context.GameStates.AddAsync(gameState);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
             return gameState.GameStateId;
         }
+        
 
-        public async Task<int> SaveMoves(ICollection<Move> moves)
+        public async Task<int> UpdateGameState(GameState gameState)
         {
-            await _context.Move.AddRangeAsync(moves);
-            return await _context.SaveChangesAsync();
+            _gameStates.Update(gameState);
+            return await SaveChangesAsync();
         }
 
         public async Task<GameSettings> GetGameSettings()
         {
             GameSettings settings;
-            if (_context.GameSettings.Any())
+            if ((await _gameSettings.AnyAsync()) == false)
             {
                 settings = new GameSettings()
                 {
@@ -67,16 +64,20 @@ namespace DAL
             }
             else
             {
-                settings = await _context.GameSettings.FirstOrDefaultAsync();
+                settings = await _gameSettings.FirstOrDefaultAsync();
             }
             return settings;
         }
 
         public async Task<int> SaveGameSettings(GameSettings gameSettings)
         {
-            await _context.GameSettings.AddAsync(gameSettings);
-            await _context.SaveChangesAsync();
+            await _gameSettings.AddAsync(gameSettings);
             return gameSettings.GameSettingsId;
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync();
         }
     }
 }

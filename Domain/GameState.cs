@@ -15,11 +15,11 @@ namespace Domain
 
         public int BoardHeight { get; set; }
         public int BoardWidth { get; set; }
-        
-        [Required]
-        public string GameMode { get; set; }
-        
-        public ICollection<Move> Moves { get; set; }
-        
+
+        public string BoardJson { get; set; } = default!;
+
+        public GameMode GameMode { get; set; } = default!;
+
+
     }
 }

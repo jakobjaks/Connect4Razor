@@ -10,6 +10,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{BD6BFC70-D968-4BA1-8D5D-3B5BCF5ED30D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleUI", "ConsoleUI\ConsoleUI.csproj", "{13EC2F80-4F9F-4FB0-99D5-FAF6F9A07968}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MenuSystem", "MenuSystem\MenuSystem.csproj", "{483E1DD2-AA7E-4622-A1AE-45F218F67ED4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,13 @@ Global
 		{BD6BFC70-D968-4BA1-8D5D-3B5BCF5ED30D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD6BFC70-D968-4BA1-8D5D-3B5BCF5ED30D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD6BFC70-D968-4BA1-8D5D-3B5BCF5ED30D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13EC2F80-4F9F-4FB0-99D5-FAF6F9A07968}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13EC2F80-4F9F-4FB0-99D5-FAF6F9A07968}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13EC2F80-4F9F-4FB0-99D5-FAF6F9A07968}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13EC2F80-4F9F-4FB0-99D5-FAF6F9A07968}.Release|Any CPU.Build.0 = Release|Any CPU
+		{483E1DD2-AA7E-4622-A1AE-45F218F67ED4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{483E1DD2-AA7E-4622-A1AE-45F218F67ED4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{483E1DD2-AA7E-4622-A1AE-45F218F67ED4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{483E1DD2-AA7E-4622-A1AE-45F218F67ED4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

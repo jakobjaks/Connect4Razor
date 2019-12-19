@@ -28,15 +28,13 @@ namespace WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>(
-                options => options.UseMySql("Server=alpha.akaver.com;Database=student2018_jaroot_aspnetbook_akaver;User=student2018;Password=student2018;",
-                    mySqlOptions =>
-                    {
-                        mySqlOptions.ServerVersion(new Version(10, 2, 29), ServerType.MariaDb); // replace with your Server Version and Type
-                    }));
+                options => options.UseMySql(
+                    "Server=alpha.akaver.com;Database=student2018_jaroot_aspnetbook_akaver;User=student2018;Password=student2018;"
+                ));
 
             services.AddRazorPages();
             services.AddScoped<IStateRepository, StateRepository>();
-            services.AddScoped<IAppUnitOfWork, AppUnitOfWork>();
+            services.AddScoped<IEngine, Engine>();
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 

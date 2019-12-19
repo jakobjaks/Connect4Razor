@@ -6,13 +6,13 @@ namespace DAL
 {
     public interface IStateRepository
     {
-        GameState GetGameStateWithMoves(int id);
+        GameState GetGameState(int id);
         Task<List<GameState>> GetAllSavedGameStates();
-        Task<int> SaveGameStateWithMoves(GameState gameState);
         Task<int> SaveGameState(GameState gameState);
-        Task<int> SaveMoves(ICollection<Move> moves);
         Task<GameSettings> GetGameSettings();
         Task<int> SaveGameSettings(GameSettings gameSettings);
+        Task<int> SaveChangesAsync();
+        Task<int> UpdateGameState(GameState gameState);
 
     }
 }

@@ -1,3 +1,8 @@
 dotnet aspnet-codegenerator razorpage -m Move -outDir Pages/Move -dc AppDbContext -udl --referenceScriptLibraries -f
 dotnet aspnet-codegenerator razorpage -m GameState -outDir Pages/GameState -dc AppDbContext -udl --referenceScriptLibraries -f
 dotnet aspnet-codegenerator razorpage -m GameSettings -outDir Pages/GameSettings -dc AppDbContext -udl --referenceScriptLibraries -f
+
+
+dotnet ef database drop --project DAL --startup-project WebApp
+dotnet ef database update --project DAL --startup-project WebApp
+dotnet ef migrations add InitialDbCreation --project DAL --startup-project WebApp

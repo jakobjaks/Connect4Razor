@@ -16,14 +16,20 @@
             @for (var x = 0; x < Model.GameState.Width; x++)
             {
                 <td>
-                <form method="post">
-                    <input type="submit" value="@y@x" id="@y@x"class="cell @Html.Raw(GetGameButtonLabel(Model.GameState.Board[y, x]))" onclick="@{ Select(x); }" formmethod="post"/>
-                </form>
+                    <a type="submit" asp-route-col="@x" asp-route-gameId="@Model.GameState.StateId" id="@y@x" class="cell @Html.Raw(GetGameButtonLabel(Model.GameState.Board[y, x]))"/>
                 </td>
             }
         </tr>
     }
 </table>
+<form method="post">
+    <div class="form-group">
+        <label asp-for="GameState.GameName" class="control-label"></label>
+        <input asp-for="GameState.GameName" class="form-control"/>
+        <span asp-validation-for="GameState.GameName" class="text-danger"></span>
+    </div>
+    <input type="submit" value="Save" class="btn btn-primary" />
+</form>
 
 @functions
 {
@@ -41,27 +47,7 @@
         return "Z";
     }
 
-    void Select(int x)
-    {
-        var move = new Move();
-        move.YCoordinate = (GetLowestFreeCell(x));
-        move.XCoordinate = x;
-        Model.GameState.Moves.Add(move);
-        
-        return;
-    }
 
-    int GetLowestFreeCell(int x)
-    {
-        for (int y = Model.GameState.Height - 1; y >= 0; y--)
-        {
-            if (Model.GameState.Board[y, x] == 0)
-            {
-                return y;
-            }
-        }
-        return 0;
-    }
 
 
 }

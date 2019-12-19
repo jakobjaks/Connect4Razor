@@ -23,7 +23,7 @@ namespace WebApp.Pages_GameState
 
         public async Task OnGetAsync()
         {
-            GameState = await _context.GameStates.ToListAsync();
+            GameState = await _context.GameStates.Where(item => item.GameStateName != null).ToListAsync();
         }
     }
 }

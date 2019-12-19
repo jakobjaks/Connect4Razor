@@ -12,5 +12,7 @@ namespace Domain
         public string PlayerOneName { get; set; }
         public string PlayerTwoName { get; set; }
 
+        public GameMode GameMode { get; set; } = default!;
+
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191215131956_InitialDbCreation")]
+    [Migration("20191218200144_InitialDbCreation")]
     partial class InitialDbCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,6 +28,9 @@ namespace DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("BoardWidth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameMode")
                         .HasColumnType("int");
 
                     b.Property<string>("PlayerOneName")
@@ -50,12 +53,14 @@ namespace DAL.Migrations
                     b.Property<int>("BoardHeight")
                         .HasColumnType("int");
 
+                    b.Property<string>("BoardJson")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<int>("BoardWidth")
                         .HasColumnType("int");
 
-                    b.Property<string>("GameMode")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<int>("GameMode")
+                        .HasColumnType("int");
 
                     b.Property<string>("GameStateName")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
@@ -66,40 +71,6 @@ namespace DAL.Migrations
                     b.HasKey("GameStateId");
 
                     b.ToTable("GameStates");
-                });
-
-            modelBuilder.Entity("Domain.Move", b =>
-                {
-                    b.Property<int>("MoveId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("GameStateId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("PlayerOneTurn")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("XCoordinate")
-                        .HasColumnType("int");
-
-                    b.Property<int>("YCoordinate")
-                        .HasColumnType("int");
-
-                    b.HasKey("MoveId");
-
-                    b.HasIndex("GameStateId");
-
-                    b.ToTable("Move");
-                });
-
-            modelBuilder.Entity("Domain.Move", b =>
-                {
-                    b.HasOne("Domain.GameState", "GameState")
-                        .WithMany("Moves")
-                        .HasForeignKey("GameStateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

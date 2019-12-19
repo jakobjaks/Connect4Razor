@@ -66,7 +66,7 @@ namespace WebApp.Pages_GameSettings
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("/Game/StartGame");
         }
 
         private bool GameSettingsExists(int id)

@@ -8,13 +8,24 @@ namespace BLL.DTO
     {
         public int StateId { get; set; }
         
+        public string GameName { get; set; }
+        
         public bool PlayerOneTurn { get; set; }
 
         public int[,] Board { get; set; }
-
-        public ICollection<Move> Moves = new List<Move>(); 
         
         public int Height { get; set; }
         public int Width { get; set; }
+
+        public GameMode GameMode { get; set; } = default!;
+        public Win Winner { get; set; } = default!;
+
+        public enum Win
+        {
+            NO_WINNER,
+            PLAYER_ONE,
+            PLAYER_TWO,
+            DRAW
+        }
     }
 }

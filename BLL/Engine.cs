@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using DAL;
 using Domain;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace BLL
 {
-    public class Engine
+    public class Engine : IEngine
     {
         private readonly IStateRepository _stateRepository;
 
@@ -16,45 +17,66 @@ namespace BLL
         {
             _stateRepository = stateRepository;
         }
-        
+
 
         public BLL.DTO.GameState GetSavedState(int id)
         {
-            var gameState = _stateRepository.GetGameStateWithMoves(id);
-            var outerGameState = new BLL.DTO.GameState()
-            {
-                StateId = gameState.GameStateId,
-                Height = gameState.BoardHeight,
-                Width = gameState.BoardWidth,
-                Moves = gameState.Moves,
-                Board  = MakeBoard(gameState),
-            };
-            return outerGameState;
+            var gameState = _stateRepository.GetGameState(id);
+            return MapFromDb(gameState);
         }
-        
-        public int[,] MakeBoard(Domain.GameState gameState)
-        {
-            var board = new int[gameState.BoardHeight, gameState.BoardWidth];
-            foreach (var move in gameState.Moves)
-            {
-                var turn = 1;
-                if (move.PlayerOneTurn) turn = 0;
-                board[move.YCoordinate, move.XCoordinate] = turn;
-            }
-            return board;
-        }
+
 
         public Task<int> SaveGameState(BLL.DTO.GameState gameState)
         {
+            return _stateRepository.SaveGameState(MapFromPage(gameState));
+        }
+
+        public async Task<BLL.DTO.GameState> UpdateGameState(int gameId, int col)
+        {
+            var gameStateInner = _stateRepository.GetGameState(gameId);
+            var gameStateOuter = MapFromDb(gameStateInner);
+            if (CheckIfColumnNotFull(col, gameStateOuter))
+            {
+                SelectCell(col, gameStateOuter);
+                TurnSwitch(gameStateOuter, gameStateInner);
+                if (gameStateInner.GameMode != GameMode.HUMAN_VS_HUMAN)
+                {
+                    GenerateAIMove(gameStateOuter);
+                    TurnSwitch(gameStateOuter, gameStateInner);
+                }
+
+                gameStateInner.BoardJson = SerializeBoard(gameStateOuter.Board);
+                await _stateRepository.UpdateGameState(gameStateInner);
+            }
+            return gameStateOuter;
+        }
+
+        private DTO.GameState MapFromDb(GameState innerGameState)
+        {
+            var outerGameState = new BLL.DTO.GameState()
+            {
+                StateId = innerGameState.GameStateId,
+                Height = innerGameState.BoardHeight,
+                Width = innerGameState.BoardWidth,
+                Board = DeserializeBoard(innerGameState.BoardJson),
+                GameMode = innerGameState.GameMode,
+                PlayerOneTurn = innerGameState.Turn
+            };
+            return outerGameState;
+        }
+
+        private GameState MapFromPage(DTO.GameState outerGameState)
+        {
             var innerGameState = new GameState()
             {
-                GameStateId = gameState.StateId,
-                BoardHeight = gameState.Height,
-                BoardWidth = gameState.Width,
-                Moves = gameState.Moves,
-                GameMode = "test"
+                GameStateId = outerGameState.StateId,
+                BoardHeight = outerGameState.Height,
+                BoardWidth = outerGameState.Width,
+                BoardJson = SerializeBoard(outerGameState.Board),
+                GameMode = outerGameState.GameMode,
+                Turn = outerGameState.PlayerOneTurn
             };
-            return _stateRepository.SaveGameStateWithMoves(innerGameState);
+            return innerGameState;
         }
 
         public Task<List<GameState>> GetAllSavedGameStates()
@@ -62,7 +84,7 @@ namespace BLL
             return _stateRepository.GetAllSavedGameStates();
         }
 
-        public async Task<BLL.DTO.GameState> CreateNewGameState()
+        public async Task<BLL.DTO.GameState> CreateGameStateFromSettings()
         {
             var gameSettings = await GetGameSettings();
             var gameState = new BLL.DTO.GameState()
@@ -70,27 +92,124 @@ namespace BLL
                 Height = gameSettings.BoardHeight,
                 Width = gameSettings.BoardWidth,
                 Board = new int[gameSettings.BoardHeight, gameSettings.BoardWidth],
-                Moves = new List<Move>(),
+                PlayerOneTurn = false,
+                GameMode = gameSettings.GameMode
             };
+            return await CreateGameState(gameState);
+        }
+
+        public async Task<BLL.DTO.GameState> CreateGameStateWithGameMode(GameMode gameMode)
+        {
+            var gameSettings = await GetGameSettings();
+            var gameState = new BLL.DTO.GameState()
+            {
+                Height = gameSettings.BoardHeight,
+                Width = gameSettings.BoardWidth,
+                Board = new int[gameSettings.BoardHeight, gameSettings.BoardWidth],
+                PlayerOneTurn = false,
+                GameMode = gameMode
+            };
+            return await CreateGameState(gameState);
+        }
+
+        private async Task<DTO.GameState> CreateGameState(BLL.DTO.GameState gameState)
+        {
             FillArray(gameState.Board);
+            if (gameState.GameMode == GameMode.AI_FIRST)
+            {
+                GenerateAIMove(gameState);
+                gameState.PlayerOneTurn = true;
+            }
+            gameState.StateId = await SaveGameState(gameState);
             return gameState;
         }
 
+
         public async Task<GameSettings> GetGameSettings()
         {
-            return await _stateRepository.GetGameSettings();
+            var gameSettings = await _stateRepository.GetGameSettings();
+            await _stateRepository.SaveChangesAsync();
+            return gameSettings;
         }
-        
-        public static void FillArray(int[,] array)
+
+        private static void FillArray(int[,] array)
         {
-            Random rnd = new Random();
-            for (int i = 0; i < array.GetLength(0); i++)
+            var rnd = new Random();
+            for (var i = 0; i < array.GetLength(0); i++)
             {
-                for (int j = 0; j < array.GetLength(1); j++)
+                for (var j = 0; j < array.GetLength(1); j++)
                 {
                     array[i, j] = 0;
                 }
             }
+        }
+
+        private string SerializeBoard(int[,] board)
+        {
+            return JsonConvert.SerializeObject(board);
+        }
+
+        private int[,] DeserializeBoard(string board)
+        {
+            return JsonConvert.DeserializeObject<int[,]>(board);
+        }
+
+        private void SelectCell(int x, BLL.DTO.GameState gameState)
+        {
+            var y = (GetLowestFreeCell(x, gameState));
+            gameState.Board[y, x] = gameState.PlayerOneTurn ? 1 : 2;
+            CheckForWin();
+        }
+
+        private int GetLowestFreeCell(int x, BLL.DTO.GameState gameState)
+        {
+            if (gameState.Board[0,x] != 0);
+            for (int y = gameState.Height - 1; y >= 0; y--)
+            {
+                if (gameState.Board[y, x] == 0)
+                {
+                    return y;
+                }
+            }
+
+            return 0;
+        }
+
+        private bool CheckIfColumnNotFull(int x, DTO.GameState gameState)
+        {
+            return gameState.Board[0, x] == 0;
+        }
+
+        private void TurnSwitch(BLL.DTO.GameState gameStateOuter, GameState gameStateInner)
+        {
+            gameStateOuter.PlayerOneTurn = !gameStateOuter.PlayerOneTurn;
+            gameStateInner.Turn = !gameStateInner.Turn;
+        }
+
+        private void GenerateAIMove(BLL.DTO.GameState gameState)
+        {
+            Random r = new Random();
+            int rInt = r.Next(0, gameState.Width);
+            while (true)
+            {
+                if (gameState.Board[0, rInt] != 0) continue;
+                SelectCell(rInt, gameState);
+                break;
+            }
+        }
+
+        public Task<int> SaveGameStateWithName(DTO.GameState gameStateOuter)
+        {
+            var gameStateInner = _stateRepository.GetGameState(gameStateOuter.StateId);
+            var namedSaveState = gameStateInner;
+            namedSaveState.GameStateName = gameStateOuter.GameName;
+            namedSaveState.GameStateId = 0;
+            return _stateRepository.SaveGameState(namedSaveState);
+        }
+
+        private void CheckForWin()
+        {
+            
         }
     }
 }

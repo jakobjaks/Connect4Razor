@@ -2,18 +2,12 @@ using DAL;
 
 namespace BLL
 {
-    public class AppUnitOfWork : IAppUnitOfWork
+    public class AppUnitOfWork
     {
-        private readonly AppDbContext _appDbContext;
         
-        public AppUnitOfWork(AppDbContext appDbContext)
+        public AppUnitOfWork()
         {
-            _appDbContext = appDbContext;
         }
-
-        private StateRepository _stateRepository;
-        public IStateRepository States => _stateRepository ??= new StateRepository(_appDbContext);
-
 
 
     }

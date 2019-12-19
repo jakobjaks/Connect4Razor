@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\ADMIN\.Rider2019.2\config\consoles\db" t="IncludeRecursive" />
-    <e p="C:\Users\ADMIN\.Rider2019.2\config\extensions" t="IncludeRecursive" />
-    <e p="C:\Users\ADMIN\.Rider2019.2\config\scratches" t="IncludeRecursive" />
-    <e p="C:\Users\ADMIN\.Rider2019.2\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\ADMIN\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_VisualConnect4.935252218.00" t="ExcludeRecursive" />
+    <e p="C:\Users\ADMIN\.Rider2019.3\config\consoles\db" t="IncludeRecursive" />
+    <e p="C:\Users\ADMIN\.Rider2019.3\config\extensions" t="IncludeRecursive" />
+    <e p="C:\Users\ADMIN\.Rider2019.3\config\scratches" t="IncludeRecursive" />
+    <e p="C:\Users\ADMIN\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\ADMIN\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_VisualConnect4.935252218.00" t="ExcludeRecursive" />
     <e p="C:\Users\ADMIN\Desktop\school projects\VisualConnect4" t="IncludeFlat">
       <e p="BLL" t="IncludeRecursive">
         <e p="AppUnitOfWork.cs" t="Include" />
@@ -15,7 +15,9 @@
           <e p="GameState.cs" t="Include" />
         </e>
         <e p="Engine.cs" t="Include" />
+        <e p="GameException.cs" t="Include" />
         <e p="IAppUnitOfWork.cs" t="Include" />
+        <e p="IEngine.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netstandard2.1" t="Include">
@@ -27,14 +29,27 @@
       <e p="ConsoleApp" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="ConsoleApp.csproj" t="IncludeRecursive" />
+        <e p="ConsoleApplication.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="ConsoleApp.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
         <e p="Program.cs" t="Include" />
+      </e>
+      <e p="ConsoleUI" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="ConsoleUI.csproj" t="IncludeRecursive" />
+        <e p="GameUI.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netstandard2.1" t="Include">
+              <e p="ConsoleUI.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DAL" t="IncludeRecursive">
         <e p="AppDbContext.cs" t="Include" />
@@ -42,8 +57,8 @@
         <e p="DAL.csproj" t="IncludeRecursive" />
         <e p="IStateRepository.cs" t="Include" />
         <e p="Migrations" t="Include">
-          <e p="20191215131956_InitialDbCreation.cs" t="Include" />
-          <e p="20191215131956_InitialDbCreation.Designer.cs" t="Include" />
+          <e p="20191218200144_InitialDbCreation.cs" t="Include" />
+          <e p="20191218200144_InitialDbCreation.Designer.cs" t="Include" />
           <e p="AppDbContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
@@ -58,13 +73,26 @@
       <e p="Domain" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="Domain.csproj" t="IncludeRecursive" />
+        <e p="GameMode.cs" t="Include" />
         <e p="GameSettings.cs" t="Include" />
         <e p="GameState.cs" t="Include" />
-        <e p="Move.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netstandard2.1" t="Include">
               <e p="Domain.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="MenuSystem" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Menu.cs" t="Include" />
+        <e p="MenuItem.cs" t="Include" />
+        <e p="MenuSystem.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.1" t="Include">
+              <e p="MenuSystem.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
@@ -77,8 +105,9 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="WebApp.AssemblyInfo.cs" t="Include" />
+              <e p="WebApp.RazorAssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
@@ -90,20 +119,10 @@
           <e p="Game" t="Include">
             <e p="Game.cshtml" t="Include" />
             <e p="Game.cshtml.cs" t="Include" />
-            <e p="StartGame.cshtml" t="Include" />
-            <e p="StartGame.cshtml.cs" t="Include" />
           </e>
           <e p="GameSettings" t="Include">
-            <e p="Create.cshtml" t="Include" />
-            <e p="Create.cshtml.cs" t="Include" />
-            <e p="Delete.cshtml" t="Include" />
-            <e p="Delete.cshtml.cs" t="Include" />
-            <e p="Details.cshtml" t="Include" />
-            <e p="Details.cshtml.cs" t="Include" />
             <e p="Edit.cshtml" t="Include" />
             <e p="Edit.cshtml.cs" t="Include" />
-            <e p="Index.cshtml" t="Include" />
-            <e p="Index.cshtml.cs" t="Include" />
           </e>
           <e p="GameState" t="Include">
             <e p="Create.cshtml" t="Include" />
@@ -119,18 +138,6 @@
           </e>
           <e p="Index.cshtml" t="Include" />
           <e p="Index.cshtml.cs" t="Include" />
-          <e p="Move" t="Include">
-            <e p="Create.cshtml" t="Include" />
-            <e p="Create.cshtml.cs" t="Include" />
-            <e p="Delete.cshtml" t="Include" />
-            <e p="Delete.cshtml.cs" t="Include" />
-            <e p="Details.cshtml" t="Include" />
-            <e p="Details.cshtml.cs" t="Include" />
-            <e p="Edit.cshtml" t="Include" />
-            <e p="Edit.cshtml.cs" t="Include" />
-            <e p="Index.cshtml" t="Include" />
-            <e p="Index.cshtml.cs" t="Include" />
-          </e>
           <e p="Privacy.cshtml" t="Include" />
           <e p="Privacy.cshtml.cs" t="Include" />
           <e p="Shared" t="Include">
